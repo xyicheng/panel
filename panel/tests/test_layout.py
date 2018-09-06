@@ -3,15 +3,14 @@ from __future__ import absolute_import
 import pytest
 
 from bokeh.models import (Div, Row as BkRow, Tabs as BkTabs,
-                          Column as BkColumn, Panel as BkPanel,
-                          WidgetBox as BkWidgetBox)
+                          Column as BkColumn, Panel as BkPanel)
 from panel.layout import Column, Row, Tabs, Spacer
 from panel.pane import Bokeh, Pane
 
 
 def get_div(box):
     # Temporary utilities to unpack widget boxes
-    assert isinstance(box, BkWidgetBox)
+    assert isinstance(box, BkColumn)
     return box.children[0]
 
 

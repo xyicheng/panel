@@ -1,7 +1,7 @@
 from collections import OrderedDict
 from datetime import datetime
 
-from bokeh.layouts import WidgetBox
+from bokeh.layouts import Column
 from bokeh.models import Div as BkDiv, Slider as BkSlider
 from panel.widgets import (
     TextInput, StaticText, FloatSlider, IntSlider, RangeSlider,
@@ -16,7 +16,7 @@ def test_text_input(document, comm):
 
     box = text._get_model(document, comm=comm)
 
-    assert isinstance(box, WidgetBox)
+    assert isinstance(box, Column)
 
     widget = box.children[0]
     assert isinstance(widget, text._widget_type)
@@ -36,7 +36,7 @@ def test_static_text(document, comm):
 
     box = text._get_model(document, comm=comm)
 
-    assert isinstance(box, WidgetBox)
+    assert isinstance(box, Column)
 
     widget = box.children[0]
     assert isinstance(widget, text._widget_type)
@@ -52,7 +52,7 @@ def test_float_slider(document, comm):
 
     box = slider._get_model(document, comm=comm)
 
-    assert isinstance(box, WidgetBox)
+    assert isinstance(box, Column)
 
     widget = box.children[0]
     assert isinstance(widget, slider._widget_type)
@@ -75,7 +75,7 @@ def test_int_slider(document, comm):
 
     box = slider._get_model(document, comm=comm)
 
-    assert isinstance(box, WidgetBox)
+    assert isinstance(box, Column)
 
     widget = box.children[0]
     assert isinstance(widget, slider._widget_type)
@@ -98,7 +98,7 @@ def test_range_slider(document, comm):
 
     box = slider._get_model(document, comm=comm)
 
-    assert isinstance(box, WidgetBox)
+    assert isinstance(box, Column)
 
     widget = box.children[0]
     assert isinstance(widget, slider._widget_type)
@@ -121,7 +121,7 @@ def test_literal_input(document, comm):
 
     box = literal._get_model(document, comm=comm)
 
-    assert isinstance(box, WidgetBox)
+    assert isinstance(box, Column)
 
     widget = box.children[0]
     assert isinstance(widget, literal._widget_type)
@@ -180,7 +180,7 @@ def test_checkbox(document, comm):
 
     box = checkbox._get_model(document, comm=comm)
 
-    assert isinstance(box, WidgetBox)
+    assert isinstance(box, Column)
 
     widget = box.children[0]
     assert isinstance(widget, checkbox._widget_type)
@@ -206,7 +206,7 @@ def test_select(document, comm):
 
     box = select._get_model(document, comm=comm)
 
-    assert isinstance(box, WidgetBox)
+    assert isinstance(box, Column)
 
     widget = box.children[0]
     assert isinstance(widget, select._widget_type)
@@ -258,7 +258,7 @@ def test_multi_select(document, comm):
 
     box = select._get_model(document, comm=comm)
 
-    assert isinstance(box, WidgetBox)
+    assert isinstance(box, Column)
 
     widget = box.children[0]
     assert isinstance(widget, select._widget_type)
@@ -283,7 +283,7 @@ def test_button(document, comm):
 
     box = button._get_model(document, comm=comm)
 
-    assert isinstance(box, WidgetBox)
+    assert isinstance(box, Column)
 
     widget = box.children[0]
     assert isinstance(widget, button._widget_type)
@@ -300,7 +300,7 @@ def test_toggle(document, comm):
 
     box = toggle._get_model(document, comm=comm)
 
-    assert isinstance(box, WidgetBox)
+    assert isinstance(box, Column)
 
     widget = box.children[0]
     assert isinstance(widget, toggle._widget_type)
@@ -321,7 +321,7 @@ def test_date_picker(document, comm):
 
     box = date_picker._get_model(document, comm=comm)
 
-    assert isinstance(box, WidgetBox)
+    assert isinstance(box, Column)
 
     widget = box.children[0]
     assert isinstance(widget, date_picker._widget_type)
@@ -345,7 +345,7 @@ def test_date_range_slider(document, comm):
 
     box = date_slider._get_model(document, comm=comm)
 
-    assert isinstance(box, WidgetBox)
+    assert isinstance(box, Column)
 
     widget = box.children[0]
     assert isinstance(widget, date_slider._widget_type)
@@ -371,7 +371,7 @@ def test_discrete_slider(document, comm):
 
     box = discrete_slider._get_model(document, comm=comm)
 
-    assert isinstance(box, WidgetBox)
+    assert isinstance(box, Column)
 
     label = box.children[0]
     widget = box.children[1]

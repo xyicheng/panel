@@ -14,7 +14,7 @@ import param
 from param.parameterized import classlist
 
 from .pane import PaneBase
-from .layout import WidgetBox, Row, Layout, Tabs
+from .layout import Row, Column, Layout, Tabs, Spacer
 from .util import default_label_formatter
 from .widgets import (
     LiteralInput, Select, Checkbox, FloatSlider, IntSlider, RangeSlider,
@@ -95,8 +95,8 @@ class Param(PaneBase):
             params['name'] = object.name
         super(Param, self).__init__(object, **params)
         self._widgets = self._get_widgets()
-        self._widget_box = WidgetBox(*self._widgets.values(), height=self.height,
-                                     width=self.width, name=self.name)
+        self._widget_box = Column(*self._widgets.values(), height=self.height,
+                                  width=self.width, name=self.name)
 
         kwargs = {'name': self.name}
         if self.subpanel_layout is Tabs:

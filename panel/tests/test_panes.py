@@ -4,7 +4,7 @@ from base64 import b64decode
 import pytest
 
 import param
-from bokeh.models import (Div, Row as BkRow, WidgetBox as BkWidgetBox,
+from bokeh.models import (Div, Row as BkRow, Column as BkColumn,
                           GlyphRenderer, Circle, Line)
 from bokeh.plotting import Figure
 from panel.pane import (Pane, PaneBase, Bokeh, HoloViews, Matplotlib,
@@ -76,7 +76,7 @@ def test_holoviews_pane_mpl_renderer(document, comm):
     assert len(row.children) == 1
     assert len(pane._callbacks) == 1
     model = row.children[0]
-    assert isinstance(model, BkWidgetBox)
+    assert isinstance(model, BkColumn)
     div = model.children[0]
     assert isinstance(div, Div)
     assert '<img' in div.text
@@ -85,7 +85,7 @@ def test_holoviews_pane_mpl_renderer(document, comm):
     scatter = hv.Scatter([1, 2, 3])
     pane.object = scatter
     model = row.children[0]
-    assert isinstance(model, BkWidgetBox)
+    assert isinstance(model, BkColumn)
     div2 = model.children[0]
     assert isinstance(div2, Div)
     assert div2.text != div.text
@@ -142,7 +142,7 @@ def test_matplotlib_pane(document, comm):
     assert len(row.children) == 1
     assert len(pane._callbacks) == 1
     model = row.children[0]
-    assert isinstance(model, BkWidgetBox)
+    assert isinstance(model, BkColumn)
     div = model.children[0]
     assert isinstance(div, Div)
     assert '<img' in div.text
@@ -151,7 +151,7 @@ def test_matplotlib_pane(document, comm):
     # Replace Pane.object
     pane.object = mpl_figure()
     model = row.children[0]
-    assert isinstance(model, BkWidgetBox)
+    assert isinstance(model, BkColumn)
     div2 = model.children[0]
     assert div is div2
     assert div.text != text
@@ -225,7 +225,7 @@ def test_param_method_pane_mpl(document, comm):
     assert len(row.children) == 1
     model = row.children[0]
     assert model.ref['id'] in inner_pane._callbacks
-    assert isinstance(model, BkWidgetBox)
+    assert isinstance(model, BkColumn)
     div = model.children[0]
     assert isinstance(div, Div)
     text = div.text
@@ -257,7 +257,7 @@ def test_param_method_pane_changing_type(document, comm):
     assert len(row.children) == 1
     model = row.children[0]
     assert model.ref['id'] in inner_pane._callbacks
-    assert isinstance(model, BkWidgetBox)
+    assert isinstance(model, BkColumn)
     div = model.children[0]
     assert isinstance(div, Div)
     text = div.text

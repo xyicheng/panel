@@ -18,10 +18,10 @@ except:
 
 import param
 
-from bokeh.layouts import Row as _BkRow, WidgetBox as _BkWidgetBox
+from bokeh.layouts import Row as _BkRow
 from bokeh.models import LayoutDOM, CustomJS, Widget as _BkWidget, Div as _BkDiv
 
-from .util import basestring, unicode, get_method_owner, push, remove_root, Div
+from .util import basestring, unicode, get_method_owner, push, remove_root
 from .viewable import Reactive, Viewable
 
 
@@ -119,16 +119,16 @@ class PaneBase(Reactive):
         def update_pane(change, history=[model]):
             old_model = history[0]
 
-            # Pane supports model updates
             if self._updates:
+                # Pane supports model updates
                 def update_models():
                     self._update(old_model)
             else:
                 # Otherwise replace the whole model
-                self._cleanup(old_model)
-                new_model = self._get_model(doc, root, parent, comm)
                 def update_models():
+                    self._cleanup(old_model)
                     index = parent.children.index(old_model)
+                    new_model = self._get_model(doc, root, parent, comm)
                     parent.children[index] = new_model
                     history[0] = new_model
 
@@ -161,7 +161,7 @@ class Bokeh(PaneBase):
         if isinstance(model, _BkWidget):
             box_kws = {k: getattr(model, k) for k in ['width', 'height', 'sizing_mode']
                        if k in model.properties()}
-            model = _BkWidgetBox(model, **box_kws)
+            model = _BkColumn(model, **box_kws)
 
         if root:
             plot_id = root.ref['id']
@@ -338,7 +338,7 @@ class DivPaneBase(PaneBase):
                 if getattr(self,p) is not None}
 
     def _get_model(self, doc, root=None, parent=None, comm=None):
-        model = Div(**self._get_properties())
+        model = _BkDiv(**self._get_properties())
         self._link_object(model, doc, root, parent, comm)
         return model
 

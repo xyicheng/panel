@@ -29,7 +29,7 @@ empty = Parameter.empty
 
 import param
 
-from .layout import WidgetBox, Layout, Column
+from .layout import Layout, Column
 from .pane import PaneBase, Pane
 from .util import basestring, as_unicode, push
 from .widgets import (Checkbox, TextInput, Widget, IntSlider, FloatSlider,
@@ -136,8 +136,8 @@ class interactive(PaneBase):
         self._widgets = OrderedDict(widgets)
         self._pane = Pane(self.object(**self.kwargs), name=self.name,
                           _temporary=True)
-        self._widget_box = WidgetBox(*(widget for _, widget in widgets
-                                       if isinstance(widget, Widget)))
+        self._widget_box = Column(*(widget for _, widget in widgets
+                                    if isinstance(widget, Widget)))
         self.layout = self.panel_layout(self._widget_box, self._pane)
 
     @property

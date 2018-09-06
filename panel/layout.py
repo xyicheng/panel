@@ -6,8 +6,8 @@ from __future__ import absolute_import
 
 import param
 
-from bokeh.layouts import (Column as BkColumn, Row as BkRow,
-                           WidgetBox as BkWidgetBox, Spacer as BkSpacer)
+from bokeh.layouts import (Column as BkColumn, Row as BkRow)
+from bokeh.models import Spacer as BkSpacer
 from bokeh.models.widgets import Tabs as BkTabs, Panel as BkPanel
 
 from .pane import Pane, PaneBase
@@ -19,6 +19,10 @@ class Layout(Reactive):
     """
     Abstract baseclass for a layout of Panes.
     """
+
+    height = param.Integer(default=None, bounds=(0, None))
+
+    width = param.Integer(default=None, bounds=(0, None))
 
     objects = param.List(default=[], doc="""
         The list of child objects that make up the layout.""")
@@ -82,7 +86,7 @@ class Layout(Reactive):
         return new_models
 
     def _get_model(self, doc, root=None, parent=None, comm=None):
-        model = self._bokeh_model()
+        model = self._bokeh_model(width=self.width, height=self.height)
         root = model if root is None else root
         objects = self._get_objects(model, [], doc, root, comm)
         props = dict(self._init_properties(), objects=objects)
@@ -128,42 +132,6 @@ class Column(Layout):
     """
 
     _bokeh_model = BkColumn
-
-
-class WidgetBox(Layout):
-    """
-    Box to group widgets.
-    """
-
-    height = param.Integer(default=None, bounds=(0, None))
-
-    width = param.Integer(default=None, bounds=(0, None))
-
-    _bokeh_model = BkWidgetBox
-
-    def _get_objects(self, model, old_objects, doc, root, comm=None):
-        """
-        Returns new child models for the layout while reusing unchanged
-        models and cleaning up any dropped objects.
-        """
-        old_children = getattr(model, self._rename.get('objects', 'objects'))
-        new_models = []
-        for i, pane in enumerate(self.objects):
-            pane = Pane(pane)
-            self.objects[i] = pane
-            if pane in old_objects:
-                child = old_children[old_objects.index(pane)]
-            else:
-                child = pane._get_model(doc, root, model, comm)
-            if isinstance(child, BkWidgetBox):
-                new_models += child.children
-            else:
-                new_models.append(child)
-
-        for pane, old_child in zip(old_objects, old_children):
-            if old_child not in new_models:
-                pane._cleanup(old_child)
-        return new_models
 
 
 class Tabs(Layout):
