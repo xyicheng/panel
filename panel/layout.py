@@ -13,12 +13,16 @@ from bokeh.models.widgets import Tabs as BkTabs, Panel as BkPanel
 from .pane import Pane, PaneBase
 from .util import push
 from .viewable import Reactive
+from .widgets import Widget
 
 
 class Layout(Reactive):
     """
     Abstract baseclass for a layout of Panes.
     """
+
+    css_classes = param.List(default=[], doc="""
+        CSS classes to apply to the layout.""")
 
     height = param.Integer(default=None, bounds=(0, None))
 
@@ -35,6 +39,8 @@ class Layout(Reactive):
 
     def __init__(self, *objects, **params):
         objects = [Pane(pane) for pane in objects]
+        if all(o for o in objects if isinstance(o, Widget)):
+            params['css_classes'] = params.get('css_classes', []) + ['bk-widgetbox']
         super(Layout, self).__init__(objects=objects, **params)
 
     def _init_properties(self):
