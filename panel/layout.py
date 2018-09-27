@@ -39,8 +39,9 @@ class Layout(Reactive):
 
     def __init__(self, *objects, **params):
         objects = [Pane(pane) for pane in objects]
-        if all(o for o in objects if isinstance(o, Widget)):
-            params['css_classes'] = params.get('css_classes', []) + ['bk-widgetbox']
+        css_classes = params.get('css_classes', Layout.css_classes)
+        if all(o for o in objects if isinstance(o, Widget)) and 'bk-widgetbox' not in css_classes:
+            params['css_classes'] = css_classes + ['bk-widgetbox']
         super(Layout, self).__init__(objects=objects, **params)
 
     def _init_properties(self):
@@ -92,7 +93,8 @@ class Layout(Reactive):
         return new_models
 
     def _get_model(self, doc, root=None, parent=None, comm=None):
-        model = self._bokeh_model(width=self.width, height=self.height)
+        model = self._bokeh_model(width=self.width, height=self.height,
+                                  css_classes=self.css_classes)
         root = model if root is None else root
         objects = self._get_objects(model, [], doc, root, comm)
         props = dict(self._init_properties(), objects=objects)
