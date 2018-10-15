@@ -538,7 +538,7 @@ class HTML(DivPaneBase):
     @classmethod
     def applies(cls, obj):
         if hasattr(obj, '_repr_html_'):
-            return 0.2
+            return 0.3
         elif isinstance(obj, basestring):
             return None
         else:
