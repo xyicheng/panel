@@ -11,7 +11,7 @@ from bokeh.layouts import (Column as BkColumn, Row as BkRow,
 from bokeh.models import Box as BkBox
 from bokeh.models.widgets import Tabs as BkTabs, Panel as BkPanel
 
-from .util import param_reprs, push
+from .util import param_name, param_reprs, push
 from .viewable import Reactive, Viewable
 
 
@@ -195,6 +195,12 @@ class Panel(Reactive):
         new_objects.pop(index)
         self.objects = new_objects
 
+    def remove(self, pane):
+        new_objects = list(self.objects)
+        new_objects.remove(pane)
+        self.objects = new_objects
+
+
 
 class Row(Panel):
     """
@@ -268,7 +274,7 @@ class Tabs(Panel):
 
     def __init__(self, *items, **params):
         from .pane import panel
-        objects = []
+        objects, names = [], []
         for pane in items:
             if isinstance(pane, tuple):
                 name, pane = pane
@@ -277,6 +283,9 @@ class Tabs(Panel):
             else:
                 name = None
             objects.append(panel(pane, name=name, _internal=True))
+            name = param_name(objects[-1].name) if name is None else name
+            names.append(name)
+        self._names = names
         super(Tabs, self).__init__(*objects, **params)
 
     def _get_objects(self, model, old_objects, doc, root, comm=None):
@@ -286,14 +295,18 @@ class Tabs(Panel):
         """
         from .pane import panel
         new_models = []
-        for i, pane in enumerate(self.objects):
+        if len(self._names) != len(self.objects):
+            raise ValueError('Tab names do not match objects, ensure '
+                             'that the Tabs.objects are not modified '
+                             'directly. Found %d names, expected %d.' %
+                             (len(self._names), len(self.objects)))
+        for i, (name, pane) in enumerate(zip(self._names, self.objects)):
             pane = panel(pane, _internal=True)
             self.objects[i] = pane
             if pane in old_objects:
                 child = pane._models[root.ref['id']]
             else:
                 child = pane._get_model(doc, root, model, comm)
-            name = pane[0].name if isinstance(pane, Panel) and len(pane) == 1 else pane.name
             child = BkPanel(title=name, child=child)
             new_models.append(child)
         return new_models
@@ -305,6 +318,8 @@ class Tabs(Panel):
             name, pane = pane
         new_objects = list(self.objects)
         new_objects[index] = panel(pane, name=name, _internal=True)
+        name = param_name(new_objects[index].name) if name is None else name
+        self._names[index] = name
         self.objects = new_objects
 
     def append(self, pane):
@@ -314,6 +329,8 @@ class Tabs(Panel):
             name, pane = pane
         new_objects = list(self.objects)
         new_objects.append(panel(pane, name=name, _internal=True))
+        name = param_name(new_objects[-1].name) if name is None else name
+        self._names[-1] = name
         self.objects = new_objects
 
     def insert(self, index, pane):
@@ -323,6 +340,8 @@ class Tabs(Panel):
             name, pane = pane
         new_objects = list(self.objects)
         new_objects.insert(index, panel(pane, _internal=True))
+        name = param_name(new_objects[index].name) if name is None else name
+        self._names[index] = name
         self.objects = new_objects
 
     def pop(self, index):
@@ -330,6 +349,15 @@ class Tabs(Panel):
         if index in new_objects:
             index = new_objects.index(index)
         new_objects.pop(index)
+        self._names.pop(index)
+        self.objects = new_objects
+
+    def remove(self, pane):
+        new_objects = list(self.objects)
+        if pane in new_objects:
+            index = new_objects.index(pane)
+        new_objects.remove(pane)
+        self._names.pop(index)
         self.objects = new_objects
 
 
