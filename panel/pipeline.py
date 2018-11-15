@@ -112,8 +112,14 @@ class Pipeline(param.Parameterized):
         self._stage += 1
         prev_state = self._layout[2][0]
         self._layout[2][0] = self._spinner_layout
+
+        import tornado
+        ioloop = tornado.ioloop.IOLoop.current()
+        ioloop.add_callback(self._set_stage, self._init_stage)
+
+    def _set_stage(self, stage):
         try:
-            self._layout[2][0] = self._init_stage()
+            self._layout[2][0] = stage()
         except Exception as e:
             self._stage -= 1
             self._error.object = str(e)
@@ -124,14 +130,12 @@ class Pipeline(param.Parameterized):
     @param.depends('previous', watch=True)
     def _previous(self):
         self._stage -= 1
-        try:
-            self._state = self._states[self._stage]
-            self._layout[2][0] = self._state.panel()
-        except Exception as e:
-            self._stage += 1
-            self._error.object = str(e)
-        else:
-            self._error.object = ''
+        self._state = self._states[self._stage]
+        self._layout[2][0] = self._spinner_layout
+
+        import tornado
+        ioloop = tornado.ioloop.IOLoop.current()
+        ioloop.add_callback(self._set_stage, self._state.panel)
 
     @param.depends('previous', 'next')
     def _make_progress(self):
